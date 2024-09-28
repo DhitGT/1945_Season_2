@@ -1,0 +1,12 @@
+{
+  "speed": 5,
+  "maxHealth": 100,
+  "weapon": {
+    "width": 7,
+    "height": 100,
+    "offsetX": 20,
+    "offsetY": 8,
+    "damage": 30,
+    "reloadTime": 3000
+  }
+}

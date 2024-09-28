@@ -1,0 +1,42 @@
+[
+  {
+    "level": 1,
+    "difficulty": "easy",
+    "enemies": [
+      {
+        "type": "goblin",
+        "count": 5,
+        "health": 30,
+        "damage": 10
+      }
+    ],
+    "objectives": {
+      "main": "Defeat all enemies",
+      "bonus": "Collect 5 coins"
+    },
+    "timeLimit": 120
+  },
+  {
+    "level": 2,
+    "difficulty": "medium",
+    "enemies": [
+      {
+        "type": "goblin",
+        "count": 8,
+        "health": 40,
+        "damage": 15
+      },
+      {
+        "type": "orc",
+        "count": 3,
+        "health": 70,
+        "damage": 20
+      }
+    ],
+    "objectives": {
+      "main": "Defeat the boss",
+      "bonus": "Collect 10 coins"
+    },
+    "timeLimit": 150
+  }
+]
