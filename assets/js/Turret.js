@@ -91,11 +91,16 @@ export class Turret {
     p.fill(this.color); // Example color for the turret
     p.rect(this.x, this.y, this.width, this.height);
 
-    // Draw the attack radius circle
-    p.noFill(); // No fill for the circle
-    p.stroke(255, 0, 0); // Red outline for the radius
-    p.strokeWeight(2); // Outline thickness
-    p.ellipse(this.x + this.width / 2, this.y + this.height / 2, this.range * 2, this.range * 2); // Draw the circle
+    // Check if the mouse is hovering over the turret
+    if (p.mouseX > this.x && p.mouseX < this.x + this.width &&
+      p.mouseY > this.y && p.mouseY < this.y + this.height) {
+
+      // Draw the attack radius circle
+      p.noFill(); // No fill for the circle
+      p.stroke(255, 0, 0); // Red outline for the radius
+      p.strokeWeight(2); // Outline thickness
+      p.ellipse(this.x + this.width / 2, this.y + this.height / 2, this.range * 2, this.range * 2); // Draw the circle
+    }
 
     // Restore the previous drawing style
     p.pop();

@@ -59,7 +59,7 @@ export default {
             color: p.color(0, 0, 255),
           }, // Blue turret
           {
-            turret: new Turret(0, 0, 40, 40, 30, 100, 600, enemies),
+            turret: new Turret(0, 0, 40, 40, 30, 100, 100, enemies),
             color: p.color(0, 255, 0),
           }, // Green turret
         ]
