@@ -1,6 +1,6 @@
 // Turret.js
 export class Turret {
-  constructor(x, y, width, height, damage, range, fireRate, enemies) {
+  constructor(x, y, width, height, damage, range, fireRate, enemies, color) {
     this.x = x; // X position of the turret
     this.y = y; // Y position of the turret
     this.width = width; // Width of the turret
@@ -11,6 +11,7 @@ export class Turret {
     this.lastFired = 0; // Time since last shot
     this.projectiles = []; // Array to hold the fired projectiles
     this.enemies = enemies;
+    this.color = color;
   }
 
   // Method to update turret behavior (e.g., shooting)
@@ -18,11 +19,17 @@ export class Turret {
     const closestEnemy = this.findClosestEnemy();
 
     if (closestEnemy) {
+      console.log("isclosee")
       this.shootAt(closestEnemy, p);
     }
 
     // Update projectiles
     this.updateProjectiles(p);
+  }
+
+  setPosition(x, y) {
+    this.x = x
+    this.y = y
   }
 
   // Method to find the closest enemy within range
@@ -71,7 +78,7 @@ export class Turret {
     p.push();
 
     // Draw the turret
-    p.fill(0, 200, 0); // Example color for the turret
+    p.fill(this.color); // Example color for the turret
     p.rect(this.x, this.y, this.width, this.height);
 
     // Draw the attack radius circle

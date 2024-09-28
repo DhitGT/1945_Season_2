@@ -19,6 +19,13 @@ export class Weapon {
     this.reloadCooldown = 3000; // Reload cooldown in milliseconds (3 seconds)
     this.isReloading = false; // Flag for reloading
     this.reloadStartTime = 0; // Track when reloading starts
+
+    // Recoil properties
+    this.recoilMagnitude = 5; // Magnitude of the recoil shake
+    this.recoilDuration = 200; // Duration of the recoil effect in milliseconds
+    this.shakeOffset = { x: 0, y: 0 }; // Current shake offset
+    this.shakeStartTime = 0; // Start time of the shake effect
+    this.isShaking = false; // Flag for shaking state
   }
 
   // Method to fire a bullet from the weapon
@@ -26,7 +33,7 @@ export class Weapon {
     const currentTime = p.millis();
     if (!this.isReloading && this.currentAmmo > 0 && currentTime - this.lastShotTime >= this.shootCooldown) {
       const bulletX = this.player.x + this.player.width / 2; // Center bullet's x
-      const bulletY = this.player.y + this.player.height; // Position the bullet at the bottom of the player
+      const bulletY = this.player.y + this.player.height - 10; // Position the bullet at the bottom of the player
 
       const dx = mouseX - bulletX; // Direction x
       const dy = mouseY - bulletY; // Direction y
@@ -42,15 +49,20 @@ export class Weapon {
         this.bulletSpeed // Speed
       );
 
-      console.log(dx)
-
-      console.log('Bullet created:', newBullet); // Log for debugging
       this.bullets.push(newBullet);
       this.lastShotTime = currentTime;
       this.currentAmmo--;
+
+      // Trigger recoil
+      this.triggerRecoil();
     }
   }
 
+  // Method to trigger the recoil effect
+  triggerRecoil() {
+    this.isShaking = true;
+    this.shakeStartTime = Date.now();
+  }
 
   // Method to start reloading
   reload(p) {
@@ -77,14 +89,25 @@ export class Weapon {
         this.reloadStartTime = 0; // Reset the start time
       }
     }
+
+    // Handle shake effect
+    if (this.isShaking) {
+      const elapsed = Date.now() - this.shakeStartTime;
+      if (elapsed < this.recoilDuration) {
+        this.shakeOffset.x = (Math.random() * this.recoilMagnitude) - (this.recoilMagnitude / 2); // Random x offset
+        this.shakeOffset.y = (Math.random() * this.recoilMagnitude) - (this.recoilMagnitude / 2); // Random y offset
+      } else {
+        this.isShaking = false; // Stop shaking
+        this.shakeOffset = { x: 0, y: 0 }; // Reset shake offset
+      }
+    }
   }
 
   // Draw the weapon
-  // Draw the weapon
   draw(p) {
     // Calculate the weapon's position
-    const weaponX = this.player.x + this.player.width / 2; // Centered horizontally
-    const weaponY = this.player.y + this.player.height; // Bottom of the player
+    const weaponX = this.player.x + this.player.width / 2 + this.shakeOffset.x; // Centered horizontally with shake offset
+    const weaponY = this.player.y + this.player.height - 10 + this.shakeOffset.y; // Bottom of the player with shake offset
 
     // Save the current drawing state
     p.push();
@@ -109,7 +132,6 @@ export class Weapon {
     // Draw ammo count
     this.drawAmmo(p);
   }
-
 
   // Draw the current ammo count on the screen
   drawAmmo(p) {

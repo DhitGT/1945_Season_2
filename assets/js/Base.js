@@ -1,52 +1,57 @@
-// Base.js
 export class Base {
-  constructor(x, y, width, height) {
-    this.x = x; // X position of the base
-    this.y = y; // Y position of the base
-    this.width = width; // Width of the base
-    this.height = height; // Height of the base
-    this.turrets = []; // Array to hold the placed turrets
+  constructor(cols, rows, cellSize, startX, startY) {
+    this.cols = cols; // Number of columns
+    this.rows = rows; // Number of rows
+    this.cellSize = cellSize; // Size of each grid cell
+    this.startX = startX; // X-coordinate where grid starts
+    this.startY = startY; // Y-coordinate where grid starts
+    this.grid = this.createGrid();
   }
 
-  // Method to place a turret at a specific position
-  placeTurret(turret) {
-    if (this.canPlaceTurret(turret)) {
-      this.turrets.push(turret);
-      console.log(`Turret placed at (${turret.x}, ${turret.y})`);
-    } else {
-      console.log('Cannot place turret here.');
+  // Create a grid array with all cells initialized as null (no turret)
+  createGrid() {
+    let grid = [];
+    for (let col = 0; col < this.cols; col++) {
+      let rowArray = [];
+      for (let row = 0; row < this.rows; row++) {
+        rowArray.push(null); // No turret in any cell initially
+      }
+      grid.push(rowArray);
+    }
+    return grid;
+  }
+
+  // Draw the grid on the screen
+  drawGrid(p) {
+    p.stroke(255); // White grid lines
+    for (let col = 0; col < this.cols; col++) {
+      for (let row = 0; row < this.rows; row++) {
+        let x = this.startX + col * this.cellSize;
+        let y = this.startY + row * this.cellSize;
+        p.noFill();
+        p.rect(x, y, this.cellSize, this.cellSize); // Draw each cell
+
+        // Highlight the cell if it's hovered by the mouse
+        if (this.isHovered(p, col, row)) {
+          p.fill(200, 200, 0, 100); // Highlight color (yellow)
+          p.rect(x, y, this.cellSize, this.cellSize);
+        }
+      }
     }
   }
 
-  // Method to check if a turret can be placed
-  canPlaceTurret(turret) {
-    // Check if the turret fits within the base boundaries
-    return (
-      turret.x >= this.x &&
-      turret.y >= this.y &&
-      turret.x + turret.width <= this.x + this.width &&
-      turret.y + turret.height <= this.y + this.height
-    );
+  // Check if the mouse is hovering over a particular cell
+  isHovered(p, col, row) {
+    let x = this.startX + col * this.cellSize;
+    let y = this.startY + row * this.cellSize;
+    return p.mouseX > x && p.mouseX < x + this.cellSize && p.mouseY > y && p.mouseY < y + this.cellSize;
   }
 
-  // Method to draw the base and the turrets
-  draw(p) {
-    // Save the current drawing style for the base
-    p.push();
-
-    // Draw the base (you can customize the appearance)
-    p.fill(150, 75, 255); // Example color for the base
-    p.rect(this.x, this.y, this.width, this.height);
-
-    // Restore the previous drawing style for the base
-    p.pop();
-
-    // Draw each turret
-    this.turrets.forEach(turret => turret.draw(p));
-  }
-
-  // Method to update the turrets
-  update(p) {
-    this.turrets.forEach(turret => turret.update(p));
+  // Place a turret in a grid cell
+  placeTurret(p, col, row, turret) {
+    if (this.grid[col][row] === null) { // Ensure the cell is empty
+      this.grid[col][row] = turret;
+      turret.setPosition(this.startX + col * this.cellSize, this.startY + row * this.cellSize);
+    }
   }
 }
