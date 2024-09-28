@@ -46,7 +46,9 @@ export class Weapon {
         bulletY,  // Starting y position
         direction.dx, // Direction x
         direction.dy, // Direction y
-        this.bulletSpeed // Speed
+        this.bulletSpeed, // Speed
+        2, // Damage
+        this.bullets.length //Index
       );
 
       this.bullets.push(newBullet);

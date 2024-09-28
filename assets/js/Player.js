@@ -10,6 +10,26 @@ export class Player extends Entity {
     this.currentHealth = maxHealth; // Current health
     // Create a weapon with physical dimensions and position offset
     this.weapon = new Weapon(this, 7, 100, 8, 20, 30, 3000); // width, height, offsetX, offsetY
+    this.coins = 0; // Initialize coins
+
+
+  }
+
+  addCoins(amount) {
+    this.coins += amount;
+    console.log(`Coins added: ${amount}. Total coins: ${this.coins}`);
+  }
+
+  // Method to spend coins for purchasing turrets
+  spendCoins(amount) {
+    if (this.coins >= amount) {
+      this.coins -= amount;
+      console.log(`Coins spent: ${amount}. Remaining coins: ${this.coins}`);
+      return true; // Purchase successful
+    } else {
+      console.log('Not enough coins to purchase turret.');
+      return false; // Purchase failed
+    }
   }
 
   // Method to apply damage

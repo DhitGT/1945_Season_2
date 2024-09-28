@@ -32,6 +32,7 @@ export default {
       let isEditMode = false
       let turretHotbar = []
       let selectedTurretIndex = 0 // To track the selected turret from the hotbar
+      let coins = []
 
       p.setup = () => {
         p.createCanvas(1000, 600)
@@ -43,7 +44,7 @@ export default {
         // Create some enemies
         for (let i = 0; i < 3; i++) {
           enemies.push(
-            new Enemy(p.random(100, 500), p.random(100, 300), 30, 30, 2)
+            new Enemy(p.random(100, 500), p.random(100, 300), 30, 30, 2, 30)
           )
         }
 
@@ -79,6 +80,13 @@ export default {
           isPlacingTurret = false // Exit placing mode when toggling
           console.log(`Edit mode is now ${isEditMode ? 'ON' : 'OFF'}`)
         }
+      }
+
+      function drawCoins(p, player) {
+        p.fill(255) // Set text color to white
+        p.textSize(20) // Set font size
+        p.textAlign(p.RIGHT) // Align text to the right
+        p.text(`Coins: ${player.coins}`, p.width - 10, 30) // Draw the coin amount
       }
 
       function mousePressed() {
@@ -120,6 +128,8 @@ export default {
           base.drawGrid(p) // Draw the base grid
         }
 
+        drawCoins(p, player)
+
         // Draw turret preview
         if (isPlacingTurret && selectedTurret) {
           selectedTurret.setPosition(p.mouseX - 20, p.mouseY - 20) // Center turret to mouse
@@ -138,8 +148,33 @@ export default {
 
         // Update and draw enemies
         for (let enemy of enemies) {
+          for (let bullet of player.weapon.bullets) {
+            if (enemy.collidesWith(bullet)) {
+              enemy.takeDamage(bullet.damage)
+              player.weapon.bullets.splice(bullet.index, 1)
+              if (!enemy.isAlive && !enemy.droppedCoin) {
+                coins.push(enemy.dropCoin(coins.length))
+              }
+            }
+          }
+
+          // console.log('hp : ' + enemy.hp)
+
           enemy.followPlayer(player)
           enemy.draw(p)
+        }
+
+        // console.log(coins)
+
+        for (let coin of coins) {
+          if (!coin.collected) {
+            coin.collect(player)
+          }
+          coin.draw(p)
+
+          if (coin.collected) {
+            coins.splice(coin.index, 1)
+          }
         }
 
         // Draw hotbar
