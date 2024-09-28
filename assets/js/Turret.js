@@ -39,7 +39,7 @@ export class Turret {
 
     this.enemies.forEach(enemy => {
       const distance = this.calculateDistance(enemy);
-      if (distance < closestDistance) {
+      if (distance < closestDistance && enemy.isAlive) {
         closestDistance = distance;
         closest = enemy;
       }
@@ -60,7 +60,7 @@ export class Turret {
     const currentTime = p.millis(); // Get current time in milliseconds
     if (currentTime - this.lastFired >= this.fireRate) {
       // Create a projectile towards the target
-      const projectile = new Projectile(this.x, this.y, target.x, target.y, this.damage);
+      const projectile = new Projectile(this.x, this.y, target.x, target.y, this.damage, this.enemies);
       this.projectiles.push(projectile);
       this.lastFired = currentTime; // Update the last fired time
     }
@@ -68,8 +68,18 @@ export class Turret {
 
   // Method to update projectiles
   updateProjectiles(p) {
-    this.projectiles.forEach(projectile => projectile.update(p));
+    for (let i = 0; i < this.projectiles.length; i++) {
+      let projectile = this.projectiles[i];
+
+      projectile.update(p)
+      if (!projectile.alive) {
+        this.projectiles.splice(i, 1)
+      }
+    }
+
   }
+
+
 
   // Method to draw the turret and its attack radius
   // Method to draw the turret and its attack radius
@@ -98,12 +108,14 @@ export class Turret {
 
 // Projectile Class remains the same
 class Projectile {
-  constructor(x, y, targetX, targetY, damage) {
+  constructor(x, y, targetX, targetY, damage, enemies) {
     this.x = x;
     this.y = y;
     this.damage = damage;
     this.speed = 5; // Projectile speed
     this.direction = this.calculateDirection(targetX, targetY);
+    this.enemies = enemies
+    this.alive = true
   }
 
   // Calculate direction vector towards the target
@@ -116,13 +128,36 @@ class Projectile {
   update(p) {
     this.x += this.direction.x * this.speed;
     this.y += this.direction.y * this.speed;
+
+    // console.log(this.enemies.length)
+
+    for (let i = 0; i < this.enemies.length; i++) {
+      let enemy = this.enemies[i]
+      if (this.collidesWith(enemy)) {
+        console.log("colldesss")
+        enemy.takeDamage(this.damage)
+        this.alive = false;
+      }
+    }
+  }
+
+  collidesWith(enemy) {
+
+    return (
+      this.x < enemy.x + enemy.width &&
+      this.x + 5 > enemy.x &&
+      this.y < enemy.y + enemy.height &&
+      this.y + 5 > enemy.y
+    );
   }
 
   // Draw the projectile
   draw(p) {
-    p.push();
-    p.fill(255, 255, 0); // Example color for the projectile
-    p.ellipse(this.x, this.y, 5, 5); // Draw as a circle
-    p.pop();
+    if (this.alive) {
+      p.push();
+      p.fill(255, 255, 0); // Example color for the projectile
+      p.ellipse(this.x, this.y, 5, 5); // Draw as a circle
+      p.pop();
+    }
   }
 }

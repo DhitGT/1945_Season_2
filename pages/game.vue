@@ -44,7 +44,7 @@ export default {
         // Create some enemies
         for (let i = 0; i < 3; i++) {
           enemies.push(
-            new Enemy(p.random(100, 500), p.random(100, 300), 30, 30, 2, 30)
+            new Enemy(p.random(100, 500), p.random(100, 300), 30, 30, 2, 1000)
           )
         }
 
@@ -147,18 +147,30 @@ export default {
         player.draw(p)
 
         // Update and draw enemies
-        for (let enemy of enemies) {
-          for (let bullet of player.weapon.bullets) {
+        for (let i = 0; i < enemies.length; i++) {
+          const enemy = enemies[i] // Get the current enemy
+
+          // Check for collisions with bullets
+          for (let j = 0; j < player.weapon.bullets.length; j++) {
+            const bullet = player.weapon.bullets[j] // Get the current bullet
+
             if (enemy.collidesWith(bullet)) {
               enemy.takeDamage(bullet.damage)
-              player.weapon.bullets.splice(bullet.index, 1)
+
+              // Remove the bullet after collision
+              player.weapon.bullets.splice(j, 1) // Remove the bullet using its index
+              console.log('Bullet destroyed')
+
+              // Drop a coin if the enemy is dead and hasn't dropped one yet
               if (!enemy.isAlive && !enemy.droppedCoin) {
-                coins.push(enemy.dropCoin(coins.length))
+                enemies.splice(i, 1)
+                coins.push(enemy.dropCoin(coins.length)) // Assuming dropCoin method returns a coin
               }
+
+              // Break the loop if the bullet is destroyed to avoid checking it again
+              break
             }
           }
-
-          // console.log('hp : ' + enemy.hp)
 
           enemy.followPlayer(player)
           enemy.draw(p)
