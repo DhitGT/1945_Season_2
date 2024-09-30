@@ -167,7 +167,7 @@ export default {
                 coins.push(enemy.dropCoin(coins.length)) // Assuming dropCoin method returns a coin
               }
 
-              // Break the loop if the bullet is destroyed to avoid checking it again
+              // Break the loop if the bullet is destroyed to avoid checking it again qweqweqwewqe
               break
             }
           }
