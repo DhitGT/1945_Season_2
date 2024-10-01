@@ -1,6 +1,8 @@
 // Turret.js
+import { GameState } from './GameState';
+
 export class Turret {
-  constructor(x, y, width, height, damage, range, fireRate, enemies, color) {
+  constructor(x, y, width, height, damage, range, fireRate, enemies, coins, color) {
     this.x = x; // X position of the turret
     this.y = y; // Y position of the turret
     this.width = width; // Width of the turret
@@ -12,6 +14,7 @@ export class Turret {
     this.projectiles = []; // Array to hold the fired projectiles
     this.enemies = enemies;
     this.color = color;
+    this.coins = coins;
   }
 
   // Method to update turret behavior (e.g., shooting)
@@ -60,7 +63,7 @@ export class Turret {
     const currentTime = p.millis(); // Get current time in milliseconds
     if (currentTime - this.lastFired >= this.fireRate) {
       // Create a projectile towards the target
-      const projectile = new Projectile(this.x, this.y, target.x, target.y, this.damage, this.enemies);
+      const projectile = new Projectile(this.x, this.y, target.x, target.y, this.damage, this.enemies, this.coins);
       this.projectiles.push(projectile);
       this.lastFired = currentTime; // Update the last fired time
     }
@@ -113,13 +116,14 @@ export class Turret {
 
 // Projectile Class remains the same
 class Projectile {
-  constructor(x, y, targetX, targetY, damage, enemies) {
+  constructor(x, y, targetX, targetY, damage, enemies, coins) {
     this.x = x;
     this.y = y;
     this.damage = damage;
     this.speed = 5; // Projectile speed
     this.direction = this.calculateDirection(targetX, targetY);
     this.enemies = enemies
+    this.coins = coins
     this.alive = true
   }
 
@@ -142,6 +146,11 @@ class Projectile {
         console.log("colldesss")
         enemy.takeDamage(this.damage)
         this.alive = false;
+
+
+      }
+      if (!enemy.isAlive && !enemy.droppedCoin) {
+        this.coins.push(enemy.dropCoin(this.coins.length)) // Assuming dropCoin method returns a coin
       }
     }
   }

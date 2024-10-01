@@ -47,7 +47,7 @@ export class Weapon {
         direction.dx, // Direction x
         direction.dy, // Direction y
         this.bulletSpeed, // Speed
-        2, // Damage
+        12, // Damage
         this.bullets.length //Index
       );
 

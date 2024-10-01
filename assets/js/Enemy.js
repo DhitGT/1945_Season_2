@@ -2,27 +2,100 @@ import { Entity } from './Entity';
 import { Coin } from './Coin'; // Import the Coin class
 
 export class Enemy extends Entity {
-  constructor(x, y, width, height, speed, hp) {
+  constructor(enemies, index, x, y, width, height, speed, hp, turrets) {
     super(x, y, width, height);
     this.speed = speed;
     this.hp = hp; // Initialize enemy health points
     this.maxHp = hp;
     this.isAlive = true; // Flag to track if the enemy is alive
     this.droppedCoin = false;
+    this.enemies = enemies;
+    this.index = index;
+    this.turrets = turrets; // Array of turrets to find the nearest one
+    this.target = null; // The target (turret or player) the enemy will attack
+    this.attackRange = 50; // Range for attacking
   }
 
-  // Enemy-specific movement logic (e.g., move towards player)
-  followPlayer(player) {
-    if (this.isAlive) {
-      const dx = player.x - this.x;
-      const dy = player.y - this.y;
+  followTarget(target) {
+    const targetX = target.x;
+    const targetY = target.y;
+
+    // Simple movement towards the target
+    if (this.x < targetX) {
+      this.x += this.speed; // Move right
+    } else if (this.x > targetX) {
+      this.x -= this.speed; // Move left
+    }
+
+    if (this.y < targetY) {
+      this.y += this.speed; // Move down
+    } else if (this.y > targetY) {
+      this.y -= this.speed; // Move up
+    }
+
+    // Additional logic for attacking could be added here
+  }
+
+  // Method to find the nearest turret and player
+  findNearestTarget(player) {
+    let closestDistance = Infinity;
+    this.target = null;
+
+    // Check distance to each turret
+    for (const turret of this.turrets) {
+      const dx = turret.x - this.x;
+      const dy = turret.y - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // Move towards the player
-      if (distance > 0) {
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        this.target = turret; // Set turret as the closest target
+      }
+    }
+
+    // Check distance to the player
+    const playerDx = player.x - this.x;
+    const playerDy = player.y - this.y;
+    const playerDistance = Math.sqrt(playerDx * playerDx + playerDy * playerDy);
+
+    // Compare with the player's distance
+    if (playerDistance < closestDistance) {
+      this.target = player; // Set player as the closest target
+    }
+  }
+
+  // Move towards the target (either turret or player)
+  moveToTarget() {
+    if (this.target) {
+      const targetX = this.target.x + this.target.width / 2; // Center of the target
+      const targetY = this.target.y + this.target.height / 2;
+
+      const dx = targetX - this.x;
+      const dy = targetY - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance > this.attackRange) {
+        // Normalize direction and move towards the target
         this.x += (dx / distance) * this.speed;
         this.y += (dy / distance) * this.speed;
+      } else {
+        // If close enough, stop moving and shoot
+        this.shoot();
       }
+    }
+  }
+
+  // Method to shoot at the target
+  shoot() {
+    // Implement shooting logic (e.g., create bullets targeting the current target)
+    console.log('Shooting at:', this.target);
+  }
+
+  // Update method to handle enemy behavior
+  update(player) {
+    if (this.isAlive) {
+      this.findNearestTarget(player); // Find the nearest target each update
+      this.moveToTarget(); // Move towards the selected target
     }
   }
 
@@ -34,7 +107,6 @@ export class Enemy extends Entity {
       this.y + this.height > bullet.y
     );
   }
-
 
   // Method to take damage from bullets
   takeDamage(amount) {
@@ -49,17 +121,8 @@ export class Enemy extends Entity {
   // Handle enemy death
   die() {
     this.isAlive = false;
+    this.enemies.splice(this.index, 1);
     // this.dropCoin(); // Drop a coin when the enemy dies
-  }
-
-  // Drop a coin at the enemy's position
-  dropCoin(index) {
-
-      this.droppedCoin = true;
-      const coinX = this.x + this.width / 2; // Center the coin's x position
-      const coinY = this.y + this.height / 2; // Center the coin's y position
-      return new Coin(index, coinX, coinY); // Create and return a new coin
-
   }
 
   // Draw the HP bar above the enemy
@@ -85,4 +148,6 @@ export class Enemy extends Entity {
       this.drawHPBar(p); // Draw the HP bar
     }
   }
+
+
 }
