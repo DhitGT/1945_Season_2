@@ -41,7 +41,6 @@ export class Enemy extends Entity {
     let closestDistance = Infinity;
     this.target = null;
 
-    // Check distance to each turret
     for (const turret of this.turrets) {
       const dx = turret.x - this.x;
       const dy = turret.y - this.y;
