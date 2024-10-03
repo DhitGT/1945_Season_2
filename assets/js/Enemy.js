@@ -48,7 +48,7 @@ export class Enemy extends Entity {
 
       if (distance < closestDistance) {
         closestDistance = distance;
-        this.target = turret; // Set turret as the closest target
+        this.target = turret;
       }
     }
 
