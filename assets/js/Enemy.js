@@ -52,7 +52,7 @@ export class Enemy extends Entity {
       }
     }
 
-    // Check distance to the player
+
     const playerDx = player.x - this.x;
     const playerDy = player.y - this.y;
     const playerDistance = Math.sqrt(playerDx * playerDx + playerDy * playerDy);
