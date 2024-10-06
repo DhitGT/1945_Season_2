@@ -33,7 +33,6 @@ export class Enemy extends Entity {
       this.y -= this.speed; // Move up
     }
 
-    // Additional logic for attacking could be added here
   }
 
   // Method to find the nearest turret and player
