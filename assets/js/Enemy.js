@@ -56,7 +56,7 @@ export class Enemy extends Entity {
     const playerDy = player.y - this.y;
     const playerDistance = Math.sqrt(playerDx * playerDx + playerDy * playerDy);
 
-    // Compare with the player's distance
+
     if (playerDistance < closestDistance) {
       this.target = player; // Set player as the closest target
     }
