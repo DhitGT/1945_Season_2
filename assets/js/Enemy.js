@@ -58,7 +58,7 @@ export class Enemy extends Entity {
 
 
     if (playerDistance < closestDistance) {
-      this.target = player; // Set player as the closest target
+      this.target = player; 
     }
   }
 
