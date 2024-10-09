@@ -62,7 +62,6 @@ export class Enemy extends Entity {
     }
   }
 
-  // Move towards the target (either turret or player)
   moveToTarget() {
     if (this.target) {
       const targetX = this.target.x + this.target.width / 2; // Center of the target
