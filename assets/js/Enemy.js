@@ -72,7 +72,8 @@ export class Enemy extends Entity {
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance > this.attackRange) {
-        // Normalize direction and move towards the target
+       
+       
         this.x += (dx / distance) * this.speed;
         this.y += (dy / distance) * this.speed;
       } else {
